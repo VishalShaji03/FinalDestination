@@ -22,8 +22,10 @@ builder.Services.AddControllers(options =>
 if (builder.Environment.IsDevelopment() && !builder.Configuration.GetValue<bool>("UseLocalDb", true))
 {
     // Use In-Memory database for testing when LocalDB is not available
+    //builder.Services.AddDbContext<HotelContext>(options =>
+    //    options.UseInMemoryDatabase("FinalDestinationDB"));
     builder.Services.AddDbContext<HotelContext>(options =>
-        options.UseInMemoryDatabase("FinalDestinationDB"));
+        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 }
 else
 {
