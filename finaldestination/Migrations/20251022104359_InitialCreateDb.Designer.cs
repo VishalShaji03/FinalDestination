@@ -4,6 +4,7 @@ using FinalDestinationAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace finaldestination.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    partial class HotelContextModelSnapshot : ModelSnapshot
+    [Migration("20251022104359_InitialCreateDb")]
+    partial class InitialCreateDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,15 +55,12 @@ namespace finaldestination.Migrations
                     b.Property<int>("HotelId")
                         .HasColumnType("int");
 
-<<<<<<< HEAD
-=======
                     b.Property<decimal?>("LoyaltyDiscountAmount")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("LoyaltyPointsRedeemed")
                         .HasColumnType("int");
 
->>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
                     b.Property<int>("NumberOfGuests")
                         .HasColumnType("int");
 

@@ -14,24 +14,10 @@ public static class DataSeeder
             return; // Database has been seeded
         }
 
-        await SeedUsersAsync(context);
-        await SeedHotelsAsync(context);
-        await SeedBookingsAsync(context);
-        await SeedReviewsAsync(context);
-        await SeedLoyaltyAccountsAsync(context);
-        await SeedPaymentsAsync(context);
-        await SeedPointsTransactionsAsync(context);
-        
-        await context.SaveChangesAsync();
-        
-        // Update hotel ratings based on reviews
-        await UpdateHotelRatingsAsync(context);
-    }
-
-    private static async Task SeedUsersAsync(HotelContext context)
-    {
-        var users = new List<User>
+        // Seed users first
+        var admin = new User
         {
+<<<<<<< HEAD
             // Admin Users
             new User
             {
@@ -133,16 +119,20 @@ public static class DataSeeder
                 LastLoginAt = DateTime.UtcNow.AddDays(-2),
                 IsActive = true
             }
+=======
+            Name = "John Admin",
+            Email = "admin@hotel.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
+            Role = UserRole.Admin,
+            ContactNumber = "+1-555-0101",
+            CreatedAt = DateTime.UtcNow.AddDays(-90),
+            IsActive = true
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.Users.AddRange(users);
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedHotelsAsync(HotelContext context)
-    {
-        var hotels = new List<Hotel>
+        var manager1 = new User
         {
+<<<<<<< HEAD
             new Hotel
             {
                 //Id = 1,
@@ -221,16 +211,20 @@ public static class DataSeeder
                 ManagerId = 3,
                 CreatedAt = DateTime.UtcNow.AddDays(-60)
             }
+=======
+            Name = "Jane Manager",
+            Email = "manager@hotel.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager123!"),
+            Role = UserRole.HotelManager,
+            ContactNumber = "+1-555-0102",
+            CreatedAt = DateTime.UtcNow.AddDays(-85),
+            IsActive = true
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.Hotels.AddRange(hotels);
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedBookingsAsync(HotelContext context)
-    {
-        var bookings = new List<Booking>
+        var guest1 = new User
         {
+<<<<<<< HEAD
             // Completed bookings (past dates)
             new Booking
             {
@@ -348,16 +342,24 @@ public static class DataSeeder
                 Status = BookingStatus.Cancelled,
                 CreatedAt = DateTime.UtcNow.AddDays(-3)
             }
+=======
+            Name = "Bob Guest",
+            Email = "guest@example.com",
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword("Guest123!"),
+            Role = UserRole.Guest,
+            ContactNumber = "+1-555-0104",
+            CreatedAt = DateTime.UtcNow.AddDays(-75),
+            IsActive = true
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.Bookings.AddRange(bookings);
+        context.Users.AddRange(admin, manager1, guest1);
         await context.SaveChangesAsync();
-    }
 
-    private static async Task SeedReviewsAsync(HotelContext context)
-    {
-        var reviews = new List<Review>
+        // Seed hotels
+        var hotel1 = new Hotel
         {
+<<<<<<< HEAD
             // Reviews for Grand Plaza Hotel (Hotel ID: 1)
             new Review
             {
@@ -459,16 +461,22 @@ public static class DataSeeder
                 Comment = "Charming historic property with lots of character. The rooms have a vintage feel but with modern comforts. Great location in the historic district.",
                 CreatedAt = DateTime.UtcNow.AddDays(-55)
             }
+=======
+            Name = "Grand Plaza Hotel",
+            Address = "123 Main St",
+            City = "New York",
+            PricePerNight = 150.00m,
+            AvailableRooms = 50,
+            Rating = 0,
+            ReviewCount = 0,
+            ManagerId = manager1.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-90)
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.Reviews.AddRange(reviews);
-        await context.SaveChangesAsync();
-    }
-
-    private static async Task SeedLoyaltyAccountsAsync(HotelContext context)
-    {
-        var loyaltyAccounts = new List<LoyaltyAccount>
+        var hotel2 = new Hotel
         {
+<<<<<<< HEAD
             new LoyaltyAccount
             {
                // Id = 1,
@@ -509,16 +517,26 @@ public static class DataSeeder
                 TotalPointsEarned = 40,
                 LastUpdated = DateTime.UtcNow.AddDays(-6)
             }
+=======
+            Name = "Ocean View Resort",
+            Address = "456 Beach Ave",
+            City = "Miami",
+            PricePerNight = 200.00m,
+            AvailableRooms = 30,
+            Rating = 0,
+            ReviewCount = 0,
+            ManagerId = manager1.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-85)
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.LoyaltyAccounts.AddRange(loyaltyAccounts);
+        context.Hotels.AddRange(hotel1, hotel2);
         await context.SaveChangesAsync();
-    }
 
-    private static async Task SeedPaymentsAsync(HotelContext context)
-    {
-        var payments = new List<Payment>
+        // Seed a booking
+        var booking1 = new Booking
         {
+<<<<<<< HEAD
             new Payment
             {
                 //Id = 1,
@@ -616,16 +634,27 @@ public static class DataSeeder
                 ProcessedAt = DateTime.UtcNow.AddDays(-3),
                 CreatedAt = DateTime.UtcNow.AddDays(-3)
             }
+=======
+            GuestName = guest1.Name,
+            GuestEmail = guest1.Email,
+            HotelId = hotel1.Id,
+            UserId = guest1.Id,
+            CheckInDate = DateTime.UtcNow.AddDays(-30),
+            CheckOutDate = DateTime.UtcNow.AddDays(-28),
+            NumberOfGuests = 2,
+            TotalAmount = 300.00m,
+            Status = BookingStatus.Completed,
+            CreatedAt = DateTime.UtcNow.AddDays(-35)
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.Payments.AddRange(payments);
+        context.Bookings.Add(booking1);
         await context.SaveChangesAsync();
-    }
 
-    private static async Task SeedPointsTransactionsAsync(HotelContext context)
-    {
-        var pointsTransactions = new List<PointsTransaction>
+        // Seed loyalty account
+        var loyaltyAccount = new LoyaltyAccount
         {
+<<<<<<< HEAD
             // Bob Guest transactions
             new PointsTransaction
             {
@@ -716,29 +745,62 @@ public static class DataSeeder
                 Description = "Points earned from booking at Ocean View Resort",
                 CreatedAt = DateTime.UtcNow.AddDays(-8)
             }
+=======
+            UserId = guest1.Id,
+            PointsBalance = 30,
+            TotalPointsEarned = 30,
+            LastUpdated = DateTime.UtcNow.AddDays(-28)
+>>>>>>> 81f6ef4a390068899692b5d1bd3fde844dd54fa2
         };
 
-        context.PointsTransactions.AddRange(pointsTransactions);
+        context.LoyaltyAccounts.Add(loyaltyAccount);
         await context.SaveChangesAsync();
-    }
 
-    private static async Task UpdateHotelRatingsAsync(HotelContext context)
-    {
-        var hotels = await context.Hotels.Include(h => h.Reviews).ToListAsync();
-        
-        foreach (var hotel in hotels)
+        // Seed payment
+        var payment1 = new Payment
         {
-            if (hotel.Reviews.Any())
-            {
-                hotel.Rating = Math.Round((decimal)hotel.Reviews.Average(r => r.Rating), 2);
-                hotel.ReviewCount = hotel.Reviews.Count;
-            }
-        }
-        
+            BookingId = booking1.Id,
+            Amount = 300.00m,
+            Currency = "INR",
+            PaymentMethod = PaymentMethod.CreditCard,
+            Status = PaymentStatus.Completed,
+            TransactionId = "TXN001234567",
+            ProcessedAt = DateTime.UtcNow.AddDays(-35),
+            CreatedAt = DateTime.UtcNow.AddDays(-35)
+        };
+
+        context.Payments.Add(payment1);
+        await context.SaveChangesAsync();
+
+        // Seed points transaction
+        var pointsTransaction = new PointsTransaction
+        {
+            LoyaltyAccountId = loyaltyAccount.Id,
+            BookingId = booking1.Id,
+            PointsEarned = 30,
+            Description = "Points earned from booking at Grand Plaza Hotel",
+            CreatedAt = DateTime.UtcNow.AddDays(-28)
+        };
+
+        context.PointsTransactions.Add(pointsTransaction);
+        await context.SaveChangesAsync();
+
+        // Seed a review
+        var review1 = new Review
+        {
+            UserId = guest1.Id,
+            HotelId = hotel1.Id,
+            Rating = 5,
+            Comment = "Excellent service and beautiful rooms!",
+            CreatedAt = DateTime.UtcNow.AddDays(-28)
+        };
+
+        context.Reviews.Add(review1);
+        await context.SaveChangesAsync();
+
+        // Update hotel rating
+        hotel1.Rating = 5.0m;
+        hotel1.ReviewCount = 1;
         await context.SaveChangesAsync();
     }
 }
-
-
-
-
