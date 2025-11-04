@@ -21,9 +21,9 @@ public static class DataSeeder
         await SeedLoyaltyAccountsAsync(context);
         await SeedPaymentsAsync(context);
         await SeedPointsTransactionsAsync(context);
-        
+
         await context.SaveChangesAsync();
-        
+
         // Update hotel ratings based on reviews
         await UpdateHotelRatingsAsync(context);
     }
@@ -35,7 +35,7 @@ public static class DataSeeder
             // Admin Users
             new User
             {
-                Id = 1,
+                //Id = 1,
                 Name = "John Admin",
                 Email = "admin@hotel.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin123!"),
@@ -49,7 +49,7 @@ public static class DataSeeder
             // Hotel Managers
             new User
             {
-                Id = 2,
+               // Id = 2,
                 Name = "Jane Manager",
                 Email = "manager@hotel.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager123!"),
@@ -61,7 +61,7 @@ public static class DataSeeder
             },
             new User
             {
-                Id = 3,
+               // Id = 3,
                 Name = "Mike Wilson",
                 Email = "mike.wilson@hotelgroup.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Manager456!"),
@@ -75,7 +75,7 @@ public static class DataSeeder
             // Guest Users
             new User
             {
-                Id = 4,
+               // Id = 4,
                 Name = "Bob Guest",
                 Email = "guest@example.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Guest123!"),
@@ -87,7 +87,7 @@ public static class DataSeeder
             },
             new User
             {
-                Id = 5,
+               // Id = 5,
                 Name = "Alice Johnson",
                 Email = "alice.johnson@email.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Alice789!"),
@@ -99,7 +99,7 @@ public static class DataSeeder
             },
             new User
             {
-                Id = 6,
+               // Id = 6,
                 Name = "Charlie Brown",
                 Email = "charlie.brown@email.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Charlie456!"),
@@ -111,7 +111,7 @@ public static class DataSeeder
             },
             new User
             {
-                Id = 7,
+                //Id = 7,
                 Name = "Diana Prince",
                 Email = "diana.prince@email.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Diana123!"),
@@ -123,7 +123,7 @@ public static class DataSeeder
             },
             new User
             {
-                Id = 8,
+                //Id = 8,
                 Name = "Edward Smith",
                 Email = "edward.smith@email.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("Edward789!"),
@@ -145,7 +145,7 @@ public static class DataSeeder
         {
             new Hotel
             {
-                Id = 1,
+                //Id = 1,
                 Name = "Grand Plaza Hotel",
                 Address = "123 Main St",
                 City = "New York",
@@ -158,7 +158,7 @@ public static class DataSeeder
             },
             new Hotel
             {
-                Id = 2,
+               // Id = 2,
                 Name = "Ocean View Resort",
                 Address = "456 Beach Ave",
                 City = "Miami",
@@ -171,7 +171,7 @@ public static class DataSeeder
             },
             new Hotel
             {
-                Id = 3,
+              //  Id = 3,
                 Name = "Mountain Lodge",
                 Address = "789 Pine Rd",
                 City = "Denver",
@@ -184,7 +184,7 @@ public static class DataSeeder
             },
             new Hotel
             {
-                Id = 4,
+                //Id = 4,
                 Name = "Downtown Business Hotel",
                 Address = "321 Corporate Blvd",
                 City = "Chicago",
@@ -197,7 +197,7 @@ public static class DataSeeder
             },
             new Hotel
             {
-                Id = 5,
+              //  Id = 5,
                 Name = "Sunset Beach Resort",
                 Address = "789 Sunset Blvd",
                 City = "Los Angeles",
@@ -210,7 +210,7 @@ public static class DataSeeder
             },
             new Hotel
             {
-                Id = 6,
+               // Id = 6,
                 Name = "Historic Inn",
                 Address = "456 Heritage St",
                 City = "Boston",
@@ -234,7 +234,7 @@ public static class DataSeeder
             // Completed bookings (past dates)
             new Booking
             {
-                Id = 1,
+               // Id = 1,
                 GuestName = "Bob Guest",
                 GuestEmail = "guest@example.com",
                 HotelId = 1,
@@ -248,7 +248,7 @@ public static class DataSeeder
             },
             new Booking
             {
-                Id = 2,
+               // Id = 2,
                 GuestName = "Alice Johnson",
                 GuestEmail = "alice.johnson@email.com",
                 HotelId = 2,
@@ -262,7 +262,7 @@ public static class DataSeeder
             },
             new Booking
             {
-                Id = 3,
+              //  Id = 3,
                 GuestName = "Charlie Brown",
                 GuestEmail = "charlie.brown@email.com",
                 HotelId = 3,
@@ -276,7 +276,7 @@ public static class DataSeeder
             },
             new Booking
             {
-                Id = 4,
+               // Id = 4,
                 GuestName = "Diana Prince",
                 GuestEmail = "diana.prince@email.com",
                 HotelId = 1,
@@ -290,7 +290,7 @@ public static class DataSeeder
             },
             new Booking
             {
-                Id = 5,
+              //  Id = 5,
                 GuestName = "Edward Smith",
                 GuestEmail = "edward.smith@email.com",
                 HotelId = 2,
@@ -306,7 +306,7 @@ public static class DataSeeder
             // Current/Future bookings
             new Booking
             {
-                Id = 6,
+               // Id = 6,
                 GuestName = "Alice Johnson",
                 GuestEmail = "alice.johnson@email.com",
                 HotelId = 4,
@@ -320,7 +320,7 @@ public static class DataSeeder
             },
             new Booking
             {
-                Id = 7,
+               // Id = 7,
                 GuestName = "Charlie Brown",
                 GuestEmail = "charlie.brown@email.com",
                 HotelId = 5,
@@ -336,7 +336,7 @@ public static class DataSeeder
             // Cancelled booking
             new Booking
             {
-                Id = 8,
+              //  Id = 8,
                 GuestName = "Diana Prince",
                 GuestEmail = "diana.prince@email.com",
                 HotelId = 6,
@@ -361,7 +361,7 @@ public static class DataSeeder
             // Reviews for Grand Plaza Hotel (Hotel ID: 1)
             new Review
             {
-                Id = 1,
+              //  Id = 1,
                 UserId = 4,
                 HotelId = 1,
                 Rating = 5,
@@ -370,7 +370,7 @@ public static class DataSeeder
             },
             new Review
             {
-                Id = 2,
+               // Id = 2,
                 UserId = 7,
                 HotelId = 1,
                 Rating = 4,
@@ -381,7 +381,7 @@ public static class DataSeeder
             // Reviews for Ocean View Resort (Hotel ID: 2)
             new Review
             {
-                Id = 3,
+              //  Id = 3,
                 UserId = 5,
                 HotelId = 2,
                 Rating = 5,
@@ -390,7 +390,7 @@ public static class DataSeeder
             },
             new Review
             {
-                Id = 4,
+               // Id = 4,
                 UserId = 8,
                 HotelId = 2,
                 Rating = 5,
@@ -401,7 +401,7 @@ public static class DataSeeder
             // Reviews for Mountain Lodge (Hotel ID: 3)
             new Review
             {
-                Id = 5,
+                //Id = 5,
                 UserId = 6,
                 HotelId = 3,
                 Rating = 4,
@@ -412,7 +412,7 @@ public static class DataSeeder
             // Reviews for Downtown Business Hotel (Hotel ID: 4)
             new Review
             {
-                Id = 6,
+               // Id = 6,
                 UserId = 4,
                 HotelId = 4,
                 Rating = 4,
@@ -421,7 +421,7 @@ public static class DataSeeder
             },
             new Review
             {
-                Id = 7,
+              //  Id = 7,
                 UserId = 5,
                 HotelId = 4,
                 Rating = 3,
@@ -432,7 +432,7 @@ public static class DataSeeder
             // Reviews for Sunset Beach Resort (Hotel ID: 5)
             new Review
             {
-                Id = 8,
+             //   Id = 8,
                 UserId = 7,
                 HotelId = 5,
                 Rating = 5,
@@ -441,7 +441,7 @@ public static class DataSeeder
             },
             new Review
             {
-                Id = 9,
+               // Id = 9,
                 UserId = 8,
                 HotelId = 5,
                 Rating = 4,
@@ -452,7 +452,7 @@ public static class DataSeeder
             // Reviews for Historic Inn (Hotel ID: 6)
             new Review
             {
-                Id = 10,
+              //  Id = 10,
                 UserId = 6,
                 HotelId = 6,
                 Rating = 4,
@@ -471,7 +471,7 @@ public static class DataSeeder
         {
             new LoyaltyAccount
             {
-                Id = 1,
+               // Id = 1,
                 UserId = 4, // Bob Guest
                 PointsBalance = 75, // 30 + 45 from bookings
                 TotalPointsEarned = 75,
@@ -479,7 +479,7 @@ public static class DataSeeder
             },
             new LoyaltyAccount
             {
-                Id = 2,
+               // Id = 2,
                 UserId = 5, // Alice Johnson
                 PointsBalance = 96, // 60 + 40 - 4 (used some points)
                 TotalPointsEarned = 100,
@@ -487,7 +487,7 @@ public static class DataSeeder
             },
             new LoyaltyAccount
             {
-                Id = 3,
+               // Id = 3,
                 UserId = 6, // Charlie Brown
                 PointsBalance = 112, // 12 + 100 from bookings
                 TotalPointsEarned = 112,
@@ -495,7 +495,7 @@ public static class DataSeeder
             },
             new LoyaltyAccount
             {
-                Id = 4,
+              //  Id = 4,
                 UserId = 7, // Diana Prince
                 PointsBalance = 45, // 45 from one booking
                 TotalPointsEarned = 45,
@@ -503,7 +503,7 @@ public static class DataSeeder
             },
             new LoyaltyAccount
             {
-                Id = 5,
+               // Id = 5,
                 UserId = 8, // Edward Smith
                 PointsBalance = 40, // 40 from one booking
                 TotalPointsEarned = 40,
@@ -521,7 +521,7 @@ public static class DataSeeder
         {
             new Payment
             {
-                Id = 1,
+                //Id = 1,
                 BookingId = 1,
                 Amount = 300.00m,
                 Currency = "USD",
@@ -533,7 +533,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 2,
+               // Id = 2,
                 BookingId = 2,
                 Amount = 600.00m,
                 Currency = "USD",
@@ -545,7 +545,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 3,
+              //  Id = 3,
                 BookingId = 3,
                 Amount = 120.00m,
                 Currency = "USD",
@@ -557,7 +557,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 4,
+               // Id = 4,
                 BookingId = 4,
                 Amount = 450.00m,
                 Currency = "USD",
@@ -569,7 +569,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 5,
+               // Id = 5,
                 BookingId = 5,
                 Amount = 400.00m,
                 Currency = "USD",
@@ -581,7 +581,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 6,
+               // Id = 6,
                 BookingId = 6,
                 Amount = 360.00m,
                 Currency = "USD",
@@ -593,7 +593,7 @@ public static class DataSeeder
             },
             new Payment
             {
-                Id = 7,
+               // Id = 7,
                 BookingId = 7,
                 Amount = 1000.00m,
                 Currency = "USD",
@@ -606,7 +606,7 @@ public static class DataSeeder
             // Refunded payment for cancelled booking
             new Payment
             {
-                Id = 8,
+              //  Id = 8,
                 BookingId = 8,
                 Amount = 260.00m,
                 Currency = "USD",
@@ -629,7 +629,7 @@ public static class DataSeeder
             // Bob Guest transactions
             new PointsTransaction
             {
-                Id = 1,
+              //  Id = 1,
                 LoyaltyAccountId = 1,
                 BookingId = 1,
                 PointsEarned = 30, // 10% of $300
@@ -638,7 +638,7 @@ public static class DataSeeder
             },
             new PointsTransaction
             {
-                Id = 2,
+              //  Id = 2,
                 LoyaltyAccountId = 1,
                 BookingId = 4,
                 PointsEarned = 45, // 10% of $450
@@ -649,7 +649,7 @@ public static class DataSeeder
             // Alice Johnson transactions
             new PointsTransaction
             {
-                Id = 3,
+              //  Id = 3,
                 LoyaltyAccountId = 2,
                 BookingId = 2,
                 PointsEarned = 60, // 10% of $600
@@ -658,7 +658,7 @@ public static class DataSeeder
             },
             new PointsTransaction
             {
-                Id = 4,
+              //  Id = 4,
                 LoyaltyAccountId = 2,
                 BookingId = 6,
                 PointsEarned = 36, // 10% of $360
@@ -667,7 +667,7 @@ public static class DataSeeder
             },
             new PointsTransaction
             {
-                Id = 5,
+              //  Id = 5,
                 LoyaltyAccountId = 2,
                 BookingId = null,
                 PointsEarned = 4, // Bonus points
@@ -678,7 +678,7 @@ public static class DataSeeder
             // Charlie Brown transactions
             new PointsTransaction
             {
-                Id = 6,
+               // Id = 6,
                 LoyaltyAccountId = 3,
                 BookingId = 3,
                 PointsEarned = 12, // 10% of $120
@@ -687,7 +687,7 @@ public static class DataSeeder
             },
             new PointsTransaction
             {
-                Id = 7,
+              //  Id = 7,
                 LoyaltyAccountId = 3,
                 BookingId = 7,
                 PointsEarned = 100, // 10% of $1000
@@ -698,7 +698,7 @@ public static class DataSeeder
             // Diana Prince transactions
             new PointsTransaction
             {
-                Id = 8,
+               // Id = 8,
                 LoyaltyAccountId = 4,
                 BookingId = 4,
                 PointsEarned = 45, // 10% of $450
@@ -709,7 +709,7 @@ public static class DataSeeder
             // Edward Smith transactions
             new PointsTransaction
             {
-                Id = 9,
+              //  Id = 9,
                 LoyaltyAccountId = 5,
                 BookingId = 5,
                 PointsEarned = 40, // 10% of $400
@@ -725,7 +725,7 @@ public static class DataSeeder
     private static async Task UpdateHotelRatingsAsync(HotelContext context)
     {
         var hotels = await context.Hotels.Include(h => h.Reviews).ToListAsync();
-        
+
         foreach (var hotel in hotels)
         {
             if (hotel.Reviews.Any())
@@ -734,11 +734,10 @@ public static class DataSeeder
                 hotel.ReviewCount = hotel.Reviews.Count;
             }
         }
-        
+
         await context.SaveChangesAsync();
     }
 }
-
 
 
 
