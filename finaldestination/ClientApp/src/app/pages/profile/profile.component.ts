@@ -7,6 +7,7 @@ import { AuthService } from '../../services/auth.service';
 import { LoyaltyAccount } from '../../models/hotel.model';
 
 interface PointsTransaction {
+
     id: number;
     bookingId?: number;
     pointsEarned: number; // Can be negative for reversals
@@ -55,6 +56,7 @@ export class ProfileComponent implements OnInit {
     }
     
     try {
+
       const transactions = await this.http.get<PointsTransaction[]>('/api/loyalty/history').toPromise();
       if (transactions) this.transactions.set(transactions);
     } catch (err) {

@@ -17,12 +17,13 @@ builder.Services.AddControllers(options =>
     // Add global validation filter
     options.Filters.Add<ValidationFilter>();
 });
+// Note: Removed JsonStringEnumConverter to serialize enums as numbers for frontend compatibility
 
 // Database Configuration - SQL Server LocalDB
 
-    // Use SQL Server LocalDB for production-like development
-    builder.Services.AddDbContext<HotelContext>(options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Use SQL Server LocalDB for production-like development
+builder.Services.AddDbContext<HotelContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 // Authentication Configuration - JWT Bearer
@@ -67,12 +68,7 @@ builder.Services.AddSwaggerGen(c =>
     {
         Title = "FinalDestination API",
         Version = "v1",
-        Description = "A comprehensive hotel booking API with JWT authentication",
-        Contact = new OpenApiContact
-        {
-            Name = "FinalDestination",
-            Email = "support@finaldestination.com"
-        }
+        Description = "A comprehensive hotel booking API with JWT authentication"
     });
 
     // Add JWT authentication to Swagger
@@ -139,9 +135,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-// Serve static files from wwwroot (frontend)
-app.UseDefaultFiles(); // Serves index.html by default
-app.UseStaticFiles();  // Serves CSS, JS, images, etc.
+// Serve static files from wwwroot
+app.UseStaticFiles();
 
 // Global error handling middleware (must be early in pipeline)
 app.UseMiddleware<ErrorHandlingMiddleware>();
@@ -157,13 +152,13 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<HotelContext>();
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    
+
     try
     {
         // Ensure database is created
         await context.Database.EnsureCreatedAsync();
         logger.LogInformation("Database initialized successfully");
-        
+
         // Seed comprehensive sample data
         await DataSeeder.SeedAsync(context);
         logger.LogInformation("Database seeded with sample data successfully");
@@ -176,7 +171,6 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-
 
 
 

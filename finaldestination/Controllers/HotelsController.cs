@@ -102,15 +102,46 @@ public class HotelsController : ControllerBase
     }
 
     /// <summary>
-    /// Searches hotels by city and/or maximum price with caching
+    /// Gets hotels managed by the current user (requires HotelManager or Admin role)
+    /// </summary>
+    /// <returns>List of hotels managed by the current user</returns>
+    [HttpGet("my-hotels")]
+    [Authorize(Roles = "HotelManager,Admin")]
+    public async Task<ActionResult<IEnumerable<Hotel>>> GetMyHotels()
+    {
+        // Get user ID from JWT token claims
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+        {
+            _logger.LogWarning("Unable to extract user ID from token");
+            return Unauthorized("Invalid token");
+        }
+
+        _logger.LogInformation("Retrieving hotels for manager with ID: {UserId}", userId);
+
+        // Get hotels where the current user is the manager
+        var hotels = await _context.Hotels
+            .Include(h => h.Manager)
+            .Where(h => h.ManagerId == userId)
+            .ToListAsync();
+
+        _logger.LogInformation("Found {Count} hotels for manager {UserId}", hotels.Count, userId);
+
+        return Ok(hotels);
+    }
+
+    /// <summary>
+    /// Searches hotels by city, maximum price, and/or minimum rating with caching
     /// </summary>
     /// <param name="city">City to search in (optional)</param>
     /// <param name="maxPrice">Maximum price per night (optional)</param>
+    /// <param name="minRating">Minimum rating (optional, 1-5)</param>
     /// <returns>List of matching hotels</returns>
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<Hotel>>> SearchHotels(
         [FromQuery] string? city = null, 
-        [FromQuery] decimal? maxPrice = null)
+        [FromQuery] decimal? maxPrice = null,
+        [FromQuery] decimal? minRating = null)
     {
         // Validate maxPrice if provided
         if (maxPrice.HasValue && maxPrice.Value < 0)
@@ -118,10 +149,17 @@ public class HotelsController : ControllerBase
             return BadRequest("Maximum price cannot be negative.");
         }
 
-        _logger.LogInformation("Searching hotels with city: {City}, maxPrice: {MaxPrice}", city, maxPrice);
+        // Validate minRating if provided
+        if (minRating.HasValue && (minRating.Value < 0 || minRating.Value > 5))
+        {
+            return BadRequest("Minimum rating must be between 0 and 5.");
+        }
+
+        _logger.LogInformation("Searching hotels with city: {City}, maxPrice: {MaxPrice}, minRating: {MinRating}", 
+            city, maxPrice, minRating);
 
         // Create cache key based on search parameters
-        var cacheKey = $"{SEARCH_CACHE_KEY_PREFIX}{city?.ToLower() ?? "all"}:{maxPrice?.ToString() ?? "any"}";
+        var cacheKey = $"{SEARCH_CACHE_KEY_PREFIX}{city?.ToLower() ?? "all"}:{maxPrice?.ToString() ?? "any"}:{minRating?.ToString() ?? "any"}";
         
         // Try to get from cache first
         var cachedResults = await _cache.GetAsync<List<Hotel>>(cacheKey);
@@ -144,6 +182,11 @@ public class HotelsController : ControllerBase
         if (maxPrice.HasValue)
         {
             query = query.Where(h => h.PricePerNight <= maxPrice.Value);
+        }
+
+        if (minRating.HasValue)
+        {
+            query = query.Where(h => h.Rating >= minRating.Value);
         }
 
         var results = await query.ToListAsync();
@@ -195,6 +238,8 @@ public class HotelsController : ControllerBase
             AvailableRooms = request.AvailableRooms,
             Rating = request.Rating,
             ManagerId = request.ManagerId,
+            ImageUrl = request.ImageUrl?.Trim(),
+            Images = request.Images?.Trim(),
             CreatedAt = DateTime.UtcNow
         };
 
@@ -261,6 +306,8 @@ public class HotelsController : ControllerBase
         existingHotel.AvailableRooms = request.AvailableRooms;
         existingHotel.Rating = request.Rating;
         existingHotel.ManagerId = request.ManagerId;
+        existingHotel.ImageUrl = request.ImageUrl?.Trim();
+        existingHotel.Images = request.Images?.Trim();
 
         try
         {
@@ -285,12 +332,12 @@ public class HotelsController : ControllerBase
     }
 
     /// <summary>
-    /// Deletes a hotel (requires Admin role)
+    /// Deletes a hotel (requires Admin role or HotelManager who owns the hotel)
     /// </summary>
     /// <param name="id">Hotel ID</param>
     /// <returns>No content on success</returns>
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "HotelManager,Admin")]
     public async Task<IActionResult> DeleteHotel(int id)
     {
         if (id <= 0)
@@ -300,16 +347,38 @@ public class HotelsController : ControllerBase
 
         _logger.LogInformation("Attempting to delete hotel with ID: {HotelId}", id);
 
-        var hotel = await _context.Hotels.FindAsync(id);
+        var hotel = await _context.Hotels
+            .Include(h => h.Reviews)
+            .Include(h => h.Bookings)
+            .FirstOrDefaultAsync(h => h.Id == id);
+            
         if (hotel == null)
         {
             _logger.LogWarning("Hotel with ID {HotelId} not found for deletion", id);
             return NotFound($"Hotel with ID {id} not found.");
         }
 
+        // Get current user ID and role
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+        var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        
+        // If user is HotelManager, verify they own this hotel
+        if (userRole == "HotelManager")
+        {
+            if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+            {
+                return Unauthorized("Invalid token");
+            }
+            
+            if (hotel.ManagerId != userId)
+            {
+                _logger.LogWarning("HotelManager {UserId} attempted to delete hotel {HotelId} they don't own", userId, id);
+                return Forbid("You can only delete hotels you manage");
+            }
+        }
+
         // Check if hotel has active bookings
-        var hasActiveBookings = await _context.Bookings
-            .AnyAsync(b => b.HotelId == id && b.Status == BookingStatus.Confirmed);
+        var hasActiveBookings = hotel.Bookings.Any(b => b.Status == BookingStatus.Confirmed);
 
         if (hasActiveBookings)
         {
@@ -317,16 +386,40 @@ public class HotelsController : ControllerBase
             return BadRequest("Cannot delete hotel with active bookings. Please cancel all bookings first.");
         }
 
-        _context.Hotels.Remove(hotel);
-        await _context.SaveChangesAsync();
+        try
+        {
+            // Delete related reviews first
+            if (hotel.Reviews.Any())
+            {
+                _context.Reviews.RemoveRange(hotel.Reviews);
+                _logger.LogInformation("Deleted {Count} reviews for hotel {HotelId}", hotel.Reviews.Count, id);
+            }
 
-        // Invalidate relevant caches
-        await InvalidateHotelCaches();
-        await _cache.RemoveAsync($"{HOTEL_CACHE_KEY_PREFIX}{id}");
+            // Delete related bookings (only completed/cancelled ones)
+            var bookingsToDelete = hotel.Bookings.Where(b => b.Status != BookingStatus.Confirmed).ToList();
+            if (bookingsToDelete.Any())
+            {
+                _context.Bookings.RemoveRange(bookingsToDelete);
+                _logger.LogInformation("Deleted {Count} bookings for hotel {HotelId}", bookingsToDelete.Count, id);
+            }
 
-        _logger.LogInformation("Hotel {HotelId} deleted successfully", id);
+            // Finally delete the hotel
+            _context.Hotels.Remove(hotel);
+            await _context.SaveChangesAsync();
 
-        return NoContent();
+            // Invalidate relevant caches
+            await InvalidateHotelCaches();
+            await _cache.RemoveAsync($"{HOTEL_CACHE_KEY_PREFIX}{id}");
+
+            _logger.LogInformation("Hotel {HotelId} deleted successfully", id);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting hotel {HotelId}", id);
+            return StatusCode(500, "An error occurred while deleting the hotel. Please try again.");
+        }
     }
 
     /// <summary>

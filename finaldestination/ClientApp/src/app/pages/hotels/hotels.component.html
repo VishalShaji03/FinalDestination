@@ -1,0 +1,108 @@
+<app-navbar></app-navbar>
+
+<div class="page-header">
+  <div class="container">
+    <h1>Available Hotels</h1>
+    <p>Find the perfect place for your stay</p>
+  </div>
+</div>
+
+<section class="hotels-section">
+  <div class="container">
+    <!-- Search Bar -->
+    <div class="search-bar">
+      <div class="search-field">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" [(ngModel)]="city" name="city" placeholder="City (e.g., Mumbai, Delhi)">
+      </div>
+      <div class="search-field">
+        <i class="fas fa-indian-rupee-sign"></i>
+        <input type="number" [(ngModel)]="maxPrice" name="maxPrice" placeholder="Max Price (₹)">
+      </div>
+      <div class="search-field">
+        <i class="fas fa-star"></i>
+        <input type="number" [(ngModel)]="minRating" name="minRating" placeholder="Min Rating" min="1" max="5" step="0.5">
+      </div>
+      <button class="btn-search" (click)="search()">
+        <i class="fas fa-search"></i> Search
+      </button>
+      <button class="btn-clear" (click)="clearSearch()">
+        <i class="fas fa-times"></i> Clear
+      </button>
+    </div>
+    
+    <div class="hotels-grid">
+      @for (hotel of hotels(); track hotel.id) {
+        <div class="hotel-card">
+          <div class="hotel-image">
+            @if (hotel.imageUrl) {
+              <img [src]="hotel.imageUrl" [alt]="hotel.name" />
+            } @else {
+              <div class="placeholder-image">
+                <i class="fas fa-hotel"></i>
+              </div>
+            }
+            <div class="hotel-rating">
+              <i class="fas fa-star"></i> {{ hotel.rating | number:'1.1-1' }}
+            </div>
+          </div>
+          <div class="hotel-info">
+            <h3>{{ hotel.name }}</h3>
+            <p class="hotel-location">
+              <i class="fas fa-map-marker-alt"></i> {{ hotel.city }}
+            </p>
+            <p class="hotel-address">{{ hotel.address }}</p>
+            <p class="hotel-rooms">
+              <i class="fas fa-door-open"></i> {{ hotel.availableRooms }} rooms available
+            </p>
+            <div class="hotel-footer">
+              <div class="hotel-price">
+                <span class="price">{{ hotel.pricePerNight | currency:'INR':'symbol':'1.0-0' }}</span>
+                <span class="per-night">/night</span>
+              </div>
+              <a [routerLink]="['/hotels', hotel.id]" class="btn-view">View Details</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+    
+    @if (hotels().length === 0 && !loading()) {
+      <div class="no-results">
+        <i class="fas fa-search"></i>
+        <p>No hotels found matching your criteria</p>
+      </div>
+    }
+    
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button 
+          class="page-btn" 
+          (click)="goToPage(currentPage() - 1)" 
+          [disabled]="currentPage() === 1">
+          <i class="fas fa-chevron-left"></i> Previous
+        </button>
+        
+        @for (page of pages; track page) {
+          <button 
+            class="page-btn" 
+            [class.active]="page === currentPage()"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        }
+        
+        <button 
+          class="page-btn" 
+          (click)="goToPage(currentPage() + 1)" 
+          [disabled]="currentPage() === totalPages()">
+          Next <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+      
+      <div class="pagination-info">
+        Showing {{ (currentPage() - 1) * pageSize + 1 }} - {{ Math.min(currentPage() * pageSize, allHotels().length) }} of {{ allHotels().length }} hotels
+      </div>
+    }
+  </div>
+</section>

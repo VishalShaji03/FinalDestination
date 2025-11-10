@@ -1,0 +1,103 @@
+<app-navbar></app-navbar>
+
+<section class="hero">
+  <!-- Hero Slider Background -->
+  <div class="hero-slider">
+    @for (image of heroImages; track $index) {
+      <div class="hero-slide" 
+           [class.active]="currentSlide() === $index"
+           [style.background-image]="'url(' + image.url + ')'">
+        <div class="hero-slide-overlay"></div>
+      </div>
+    }
+  </div>
+
+  <!-- Slider Controls -->
+  <button class="slider-control prev" (click)="prevSlide()" aria-label="Previous slide">
+    <i class="fas fa-chevron-left"></i>
+  </button>
+  <button class="slider-control next" (click)="nextSlide()" aria-label="Next slide">
+    <i class="fas fa-chevron-right"></i>
+  </button>
+
+  <!-- Slider Indicators -->
+  <div class="slider-indicators">
+    @for (image of heroImages; track $index) {
+      <button 
+        class="indicator" 
+        [class.active]="currentSlide() === $index"
+        (click)="goToSlide($index)"
+        [attr.aria-label]="'Go to slide ' + ($index + 1)">
+      </button>
+    }
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-text-animation">
+      <h1>{{ heroImages[currentSlide()].title }}</h1>
+      <p>{{ heroImages[currentSlide()].subtitle }}</p>
+    </div>
+    
+    <div class="search-box">
+      <div class="search-field">
+        <i class="fas fa-map-marker-alt"></i>
+        <input type="text" [(ngModel)]="city" name="city" placeholder="City (e.g., Mumbai, Delhi)">
+      </div>
+      <div class="search-field">
+        <i class="fas fa-indian-rupee-sign"></i>
+        <input type="number" [(ngModel)]="maxPrice" name="maxPrice" placeholder="Max Price (₹)">
+      </div>
+      <div class="search-field">
+        <i class="fas fa-star"></i>
+        <input type="number" [(ngModel)]="minRating" name="minRating" placeholder="Min Rating (1-5)" min="1" max="5" step="0.5">
+      </div>
+      <button class="btn-search" (click)="search()">
+        <i class="fas fa-search"></i> Search
+      </button>
+    </div>
+  </div>
+</section>
+
+<section class="featured-hotels">
+  <div class="container">
+    <h2>Featured Hotels</h2>
+    <div class="hotels-grid">
+      @for (hotel of featuredHotels(); track hotel.id) {
+        <div class="hotel-card">
+          <div class="hotel-image">
+            @if (hotel.imageUrl) {
+              <img [src]="hotel.imageUrl" [alt]="hotel.name" />
+            } @else {
+              <div class="placeholder-image">
+                <i class="fas fa-hotel"></i>
+              </div>
+            }
+            <div class="hotel-rating">
+              <i class="fas fa-star"></i> {{ hotel.rating | number:'1.1-1' }}
+            </div>
+          </div>
+          <div class="hotel-info">
+            <h3>{{ hotel.name }}</h3>
+            <p class="hotel-location">
+              <i class="fas fa-map-marker-alt"></i> {{ hotel.city }}
+            </p>
+            <p class="hotel-address">{{ hotel.address }}</p>
+            <div class="hotel-footer">
+              <div class="hotel-price">
+                <span class="price">{{ hotel.pricePerNight | currency:'INR':'symbol':'1.0-0'}}</span>
+                <span class="per-night">/night</span>
+              </div>
+              <a [routerLink]="['/hotels', hotel.id]" class="btn-view">View Details</a>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2025 Final Destination. All rights reserved.</p>
+  </div>
+</footer>

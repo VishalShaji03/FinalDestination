@@ -1,0 +1,243 @@
+<app-navbar></app-navbar>
+
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <div>
+      <h1>Hotel Manager Dashboard</h1>
+      <p>Manage your hotel properties</p>
+    </div>
+    @if (!showForm()) {
+    <button class="btn-primary" (click)="showAddForm()">
+      <i class="fas fa-plus"></i> Add New Hotel
+    </button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-error">
+      <i class="fas fa-exclamation-circle"></i> {{ error() }}
+      <button class="alert-close" (click)="error.set('')">&times;</button>
+    </div>
+  }
+
+  @if (success()) {
+    <div class="alert alert-success">
+      <i class="fas fa-check-circle"></i> {{ success() }}
+      <button class="alert-close" (click)="success.set('')">&times;</button>
+    </div>
+  }
+
+  @if (loading() && !showForm()) {
+    <div class="loading">Loading hotels...</div>
+  }
+
+  @if (showForm()) {
+    <div class="hotel-form-card">
+      <div class="form-header">
+        <h2>{{ isEditing() ? 'Edit Hotel' : 'Add New Hotel' }}</h2>
+        <button class="btn-close" (click)="cancelForm()">&times;</button>
+      </div>
+
+      <form (ngSubmit)="saveHotel()">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="name">Hotel Name *</label>
+            <input 
+              type="text" 
+              id="name" 
+              [(ngModel)]="name"
+              name="name"
+              class="form-control"
+              placeholder="Enter hotel name"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="city">City *</label>
+            <input 
+              type="text" 
+              id="city" 
+              [(ngModel)]="city"
+              name="city"
+              class="form-control"
+              placeholder="Enter city"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="rating">Rating (0-5) *</label>
+            <input 
+              type="number" 
+              id="rating" 
+              [(ngModel)]="rating"
+              name="rating"
+              class="form-control"
+              min="0"
+              max="5"
+              step="0.1"
+              required>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="address">Address *</label>
+            <input 
+              type="text" 
+              id="address" 
+              [(ngModel)]="address"
+              name="address"
+              class="form-control"
+              placeholder="Enter full address"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="pricePerNight">Price Per Night ($) *</label>
+            <input 
+              type="number" 
+              id="pricePerNight" 
+              [(ngModel)]="pricePerNight"
+              name="pricePerNight"
+              class="form-control"
+              min="1"
+              step="0.01"
+              required>
+          </div>
+
+          <div class="form-group">
+            <label for="availableRooms">Available Rooms *</label>
+            <input 
+              type="number" 
+              id="availableRooms" 
+              [(ngModel)]="availableRooms"
+              name="availableRooms"
+              class="form-control"
+              min="1"
+              required>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="hotelImage">Hotel Image</label>
+            <div class="image-upload-container">
+              @if (imagePreview) {
+                <div class="image-preview">
+                  <img [src]="imagePreview" alt="Hotel preview">
+                  <button type="button" class="btn-remove-image" (click)="removeImage()">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              }
+              <div class="file-input-wrapper">
+                <input 
+                  type="file" 
+                  id="hotelImage" 
+                  (change)="onFileSelected($event)"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  class="file-input">
+                <label for="hotelImage" class="file-input-label">
+                  <i class="fas fa-cloud-upload-alt"></i>
+                  {{ selectedFile ? selectedFile.name : 'Choose image or drag here' }}
+                </label>
+                <p class="file-input-hint">JPG, PNG, or WebP (Max 5MB)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelForm()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="loading()">
+            {{ loading() ? 'Saving...' : (isEditing() ? 'Update Hotel' : 'Create Hotel') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  <div class="hotels-grid">
+    @if (hotels().length === 0 && !loading()) {
+      <div class="empty-state">
+        <p>No hotels found. Click "Add New Hotel" to create your first hotel.</p>
+      </div>
+    }
+
+    @for (hotel of hotels(); track hotel.id) {
+      <div class="hotel-card">
+        <div class="hotel-card-header">
+          <div>
+            <h3>{{ hotel.name }}</h3>
+            <p class="hotel-id">ID: #{{ hotel.id }}</p>
+          </div>
+          <span class="rating">
+            <i class="fas fa-star"></i> {{ hotel.rating.toFixed(1) }}
+          </span>
+        </div>
+        
+        <div class="hotel-card-body">
+          <div class="hotel-info">
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>{{ hotel.city }}</span>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-map"></i>
+              <span>{{ hotel.address }}</span>
+            </div>
+          </div>
+          
+          <div class="hotel-stats">
+            <div class="stat">
+              <span class="stat-label">Price/Night</span>
+              <span class="stat-value">{{ hotel.pricePerNight.toFixed(2) }}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Available Rooms</span>
+              <span class="stat-value">{{ hotel.availableRooms }}</span>
+            </div>
+          </div>
+
+          <div class="hotel-meta">
+            <span class="meta-item">
+              <i class="fas fa-calendar"></i>
+              Created: {{ hotel.createdAt | date:'mediumDate' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="hotel-card-actions">
+          <button class="btn-edit" (click)="editHotel(hotel)">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn-delete" (click)="confirmDelete(hotel)">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (showDeleteModal()) {
+<div class="modal-overlay" (click)="cancelDelete()">
+  <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Confirm Delete</h2>
+      <button class="modal-close" (click)="cancelDelete()">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="warning-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <p>Are you sure you want to delete <strong>{{ hotelToDelete()?.name }}</strong>?</p>
+      <p class="warning-text">This action cannot be undone.</p>
+    </div>
+    
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+      <button class="btn-danger" (click)="deleteHotel()" [disabled]="loading()">
+        {{ loading() ? 'Deleting...' : 'Delete Hotel' }}
+      </button>
+    </div>
+  </div>
+</div>
+}

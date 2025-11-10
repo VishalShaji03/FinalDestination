@@ -1,0 +1,110 @@
+<app-navbar></app-navbar>
+
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p class="auth-subtitle">Join Final Destination today</p>
+    </div>
+    
+    @if (error()) {
+      <div class="alert alert-error">
+        <i class="fas fa-exclamation-circle"></i> 
+        <span>{{ error() }}</span>
+        <button class="alert-close" (click)="error.set('')">&times;</button>
+      </div>
+    }
+    
+    <form (ngSubmit)="register()" class="auth-form">
+      <div class="form-group">
+        <label for="name">Full Name *</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user input-icon"></i>
+          <input 
+            type="text" 
+            id="name"
+            [(ngModel)]="name"
+            name="name"
+            class="form-control"
+            placeholder="Enter your full name"
+            required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <div class="input-wrapper">
+          <i class="fas fa-envelope input-icon"></i>
+          <input 
+            type="email" 
+            id="email"
+            [(ngModel)]="email"
+            name="email"
+            class="form-control"
+            placeholder="Enter your email"
+            required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="password"
+            name="password"
+            class="form-control"
+            placeholder="Create a strong password"
+            required>
+        </div>
+        <small class="hint">
+          <i class="fas fa-info-circle"></i>
+          Must include: uppercase, lowercase, number, special character (@$!%*?&)
+        </small>
+      </div>
+      
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password *</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock input-icon"></i>
+          <input 
+            type="password" 
+            id="confirmPassword"
+            [(ngModel)]="confirmPassword"
+            name="confirmPassword"
+            class="form-control"
+            placeholder="Re-enter your password"
+            required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactNumber">Contact Number (Optional)</label>
+        <div class="input-wrapper">
+          <i class="fas fa-phone input-icon"></i>
+          <input 
+            type="tel" 
+            id="contactNumber"
+            [(ngModel)]="contactNumber"
+            name="contactNumber"
+            class="form-control"
+            placeholder="Enter your phone number">
+        </div>
+      </div>
+      
+      <button type="submit" class="btn-submit" [disabled]="loading()">
+        @if (loading()) {
+          <i class="fas fa-spinner fa-spin"></i> Creating account...
+        } @else {
+          <i class="fas fa-user-plus"></i> Register
+        }
+      </button>
+    </form>
+    
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login">Login here</a></p>
+    </div>
+  </div>
+</div>
