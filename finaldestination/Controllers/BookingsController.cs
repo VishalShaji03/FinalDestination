@@ -336,15 +336,15 @@ public class BookingsController : ControllerBase
             {
                 // Process refund
                 refundResult = await _paymentService.RefundPaymentAsync(payment.Id, payment.Amount);
-                
+
                 if (refundResult.Status != PaymentStatus.Refunded)
                 {
-                    _logger.LogWarning("Refund failed for booking {BookingId}: {ErrorMessage}", 
+                    _logger.LogWarning("Refund failed for booking {BookingId}: {ErrorMessage}",
                         id, refundResult.ErrorMessage);
                     return BadRequest($"Failed to process refund: {refundResult.ErrorMessage}");
                 }
 
-                _logger.LogInformation("Refund {TransactionId} processed for booking {BookingId}", 
+                _logger.LogInformation("Refund {TransactionId} processed for booking {BookingId}",
                     refundResult.TransactionId, id);
             }
             catch (Exception ex)
@@ -356,7 +356,7 @@ public class BookingsController : ControllerBase
 
         // Cancel the booking
         booking.Status = BookingStatus.Cancelled;
-        
+
         // Increase available rooms back
         if (booking.Hotel != null)
         {
@@ -365,10 +365,14 @@ public class BookingsController : ControllerBase
 
         await _context.SaveChangesAsync();
 
+        // Revert loyalty points if any were awarded
+        await _loyaltyService.RevertPointsForCanceledBookingAsync(id);
+
         _logger.LogInformation("Booking {BookingId} cancelled by user {UserId}", id, currentUserId);
 
         return Ok(refundResult);
     }
+
 
     // DELETE: api/bookings/5 (Admin only)
     [HttpDelete("{id}")]

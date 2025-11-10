@@ -13,6 +13,8 @@ public interface ILoyaltyService
     Task<bool> HasLoyaltyAccountAsync(int userId);
     Task<RedeemPointsResponse> RedeemPointsAsync(int userId, int pointsToRedeem);
     Task<decimal> CalculateDiscountFromPointsAsync(int points);
+    Task RevertPointsForCanceledBookingAsync(int bookingId);
+
 }
 
 

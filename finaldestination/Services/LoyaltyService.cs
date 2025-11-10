@@ -244,6 +244,42 @@ public class LoyaltyService : ILoyaltyService
         var discount = points * 0.10m;
         return Task.FromResult(discount);
     }
+
+    public async Task RevertPointsForCanceledBookingAsync(int bookingId)
+    {
+        var transaction = await _context.PointsTransactions
+            .Include(t => t.LoyaltyAccount)
+            .FirstOrDefaultAsync(t => t.BookingId == bookingId && t.PointsEarned > 0);
+
+        if (transaction == null)
+        {
+            _logger.LogWarning("No points to revert for booking {BookingId}", bookingId);
+            return;
+        }
+
+        var loyaltyAccount = transaction.LoyaltyAccount;
+
+        // Update loyalty account
+        loyaltyAccount.PointsBalance -= transaction.PointsEarned;
+        loyaltyAccount.TotalPointsEarned -= transaction.PointsEarned;
+        loyaltyAccount.LastUpdated = DateTime.UtcNow;
+
+        // Add reversal transaction
+        var reversal = new PointsTransaction
+        {
+            LoyaltyAccountId = loyaltyAccount.Id,
+            BookingId = bookingId,
+            PointsEarned = -transaction.PointsEarned,
+            Description = $"Reverted {transaction.PointsEarned} points due to cancellation of booking #{bookingId}",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        _context.PointsTransactions.Add(reversal);
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation("Reverted {Points} points for canceled booking {BookingId}", transaction.PointsEarned, bookingId);
+    }
+
 }
 
 
